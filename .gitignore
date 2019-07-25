@@ -9,9 +9,11 @@
 !/models/.gitkeep
 # IDE config
 /.vscode/*
-# Niftii files
+# Niftii and datasets files
 /niftii/*
 !/niftii/.gitkeep
+/datasets/*
+!/datasets/.gitkeep
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

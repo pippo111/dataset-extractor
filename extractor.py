@@ -71,7 +71,7 @@ def create_training_dataset(images, masks, labels, out_file, axis=0, out_dir='z_
   # prepare directory structure
   mask_fullpath = os.path.join('.', out_dir, 'mask/axis{}'.format(axis))
   img_fullpath = os.path.join('.', out_dir, 'img/axis{}'.format(axis))
-  
+
   if not os.path.exists(mask_fullpath):
     os.makedirs(mask_fullpath)
   if not os.path.exists(img_fullpath):
@@ -97,9 +97,10 @@ def create_training_dataset(images, masks, labels, out_file, axis=0, out_dir='z_
     save_slice(binary_mask_slice, mask_fullname)
 
 labels = [4.0, 43.0]
+axis = 0
 input_mask_niftii = 'aseg-in-t1weighted_2std.nii.gz'
 input_img_niftii = 't1weighted_2std.nii.gz'
-output_dir = 'z_train'
+output_dir = '{}/z_train_axis{}'.format('datasets', axis)
 
 if os.path.exists(output_dir):
   shutil.rmtree(output_dir)
@@ -111,22 +112,22 @@ output_filename = input_dir
 mask_data = load_image_data(filename=input_mask_niftii, dirname=input_dir)
 image_data = load_image_data(filename=input_img_niftii, dirname=input_dir)
 labels_count(mask_data, labels)
-create_training_dataset(image_data, mask_data, labels, output_filename, axis=0, out_dir=output_dir)
+create_training_dataset(image_data, mask_data, labels, output_filename, axis=axis, out_dir=output_dir)
 
-# Set 2
-input_dir = 'NKI-RS-22-20'
-output_filename = input_dir
+# # Set 2
+# input_dir = 'NKI-RS-22-20'
+# output_filename = input_dir
 
-mask_data = load_image_data(filename=input_mask_niftii, dirname=input_dir)
-image_data = load_image_data(filename=input_img_niftii, dirname=input_dir)
-labels_count(mask_data, labels)
-create_training_dataset(image_data, mask_data, labels, output_filename, axis=0, out_dir=output_dir)
+# mask_data = load_image_data(filename=input_mask_niftii, dirname=input_dir)
+# image_data = load_image_data(filename=input_img_niftii, dirname=input_dir)
+# labels_count(mask_data, labels)
+# create_training_dataset(image_data, mask_data, labels, output_filename, axis=axis, out_dir=output_dir)
 
-# Set 3
-input_dir = 'NKI-TRT-20-1'
-output_filename = input_dir
+# # Set 3
+# input_dir = 'NKI-TRT-20-1'
+# output_filename = input_dir
 
-mask_data = load_image_data(filename=input_mask_niftii, dirname=input_dir)
-image_data = load_image_data(filename=input_img_niftii, dirname=input_dir)
-labels_count(mask_data, labels)
-create_training_dataset(image_data, mask_data, labels, output_filename, axis=0, out_dir=output_dir)
+# mask_data = load_image_data(filename=input_mask_niftii, dirname=input_dir)
+# image_data = load_image_data(filename=input_img_niftii, dirname=input_dir)
+# labels_count(mask_data, labels)
+# create_training_dataset(image_data, mask_data, labels, output_filename, axis=axis, out_dir=output_dir)
