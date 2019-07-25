@@ -98,9 +98,11 @@ def create_training_dataset(images, masks, labels, out_file, axis=0, out_dir='z_
 
 labels = [4.0, 43.0]
 axis = 0
+dataset_dir = 'z_train'
+
 input_mask_niftii = 'aseg-in-t1weighted_2std.nii.gz'
 input_img_niftii = 't1weighted_2std.nii.gz'
-output_dir = '{}/z_train_axis{}'.format('datasets', axis)
+output_dir = '{}/{}_axis{}'.format('datasets', dataset_dir, axis)
 
 if os.path.exists(output_dir):
   shutil.rmtree(output_dir)
