@@ -85,20 +85,18 @@ def create_training_dataset(images, masks, labels, out_file, axis=0, out_dir='z_
     image_slice = image_slices[i, :, :]
     mask_slice = mask_slices[i, :, :]
 
-    # if any(any(x in row for x in labels) for row in mask_slice):
-      # if only images with present mask
+    if any(any(x in row for x in labels) for row in mask_slice):
+      img_fullname = '{}/{}_slice_{:03d}.png'.format(img_fullpath, out_file, i)
+      mask_fullname = '{}/{}_slice_{:03d}.png'.format(mask_fullpath, out_file, i)
 
-    img_fullname = '{}/{}_slice_{:03d}.png'.format(img_fullpath, out_file, i)
-    mask_fullname = '{}/{}_slice_{:03d}.png'.format(mask_fullpath, out_file, i)
-
-    binary_mask_slice = convert_to_binary_mask(mask_slice, labels)
-    
-    save_slice(image_slice, img_fullname)
-    save_slice(binary_mask_slice, mask_fullname)
+      binary_mask_slice = convert_to_binary_mask(mask_slice, labels)
+      
+      save_slice(image_slice, img_fullname)
+      save_slice(binary_mask_slice, mask_fullname)
 
 labels = [4.0, 43.0]
-axis = 0
-dataset_dir = 'z_train'
+axis = 2
+dataset_dir = 'z_validation_maskonly'
 
 input_mask_niftii = 'aseg-in-t1weighted_2std.nii.gz'
 input_img_niftii = 't1weighted_2std.nii.gz'
@@ -108,7 +106,7 @@ if os.path.exists(output_dir):
   shutil.rmtree(output_dir)
 
 # Set 1
-input_dir = 'Colin27-1'
+input_dir = 'NKI-RS-22-7'
 output_filename = input_dir
 
 mask_data = load_image_data(filename=input_mask_niftii, dirname=input_dir)
@@ -116,17 +114,26 @@ image_data = load_image_data(filename=input_img_niftii, dirname=input_dir)
 labels_count(mask_data, labels)
 create_training_dataset(image_data, mask_data, labels, output_filename, axis=axis, out_dir=output_dir)
 
-# # Set 2
-# input_dir = 'NKI-RS-22-20'
-# output_filename = input_dir
+# Set 2
+input_dir = 'NKI-RS-22-20'
+output_filename = input_dir
 
-# mask_data = load_image_data(filename=input_mask_niftii, dirname=input_dir)
-# image_data = load_image_data(filename=input_img_niftii, dirname=input_dir)
-# labels_count(mask_data, labels)
-# create_training_dataset(image_data, mask_data, labels, output_filename, axis=axis, out_dir=output_dir)
+mask_data = load_image_data(filename=input_mask_niftii, dirname=input_dir)
+image_data = load_image_data(filename=input_img_niftii, dirname=input_dir)
+labels_count(mask_data, labels)
+create_training_dataset(image_data, mask_data, labels, output_filename, axis=axis, out_dir=output_dir)
 
-# # Set 3
-# input_dir = 'NKI-TRT-20-1'
+# Set 3
+input_dir = 'NKI-TRT-20-1'
+output_filename = input_dir
+
+mask_data = load_image_data(filename=input_mask_niftii, dirname=input_dir)
+image_data = load_image_data(filename=input_img_niftii, dirname=input_dir)
+labels_count(mask_data, labels)
+create_training_dataset(image_data, mask_data, labels, output_filename, axis=axis, out_dir=output_dir)
+
+# Validation Set 1
+# input_dir = 'Afterthought-1'
 # output_filename = input_dir
 
 # mask_data = load_image_data(filename=input_mask_niftii, dirname=input_dir)
