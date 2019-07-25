@@ -1,0 +1,5 @@
+nibabel
+tensorflow
+keras
+pillow
+matplotlib
