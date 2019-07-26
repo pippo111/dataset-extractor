@@ -60,7 +60,7 @@ def save_slice(slice_data, filename):
   im = resize_image(im)
   im.save(filename)
 
-def create_training_dataset(images, masks, labels, out_file, axis=0, out_dir='z_train'):
+def save_dataset(images, masks, labels, out_file, axis=0, out_dir='z_train'):
   slice_count = images.shape[axis]
 
   # break if number of source scan slices are different than mask slices count
@@ -94,49 +94,60 @@ def create_training_dataset(images, masks, labels, out_file, axis=0, out_dir='z_
       save_slice(image_slice, img_fullname)
       save_slice(binary_mask_slice, mask_fullname)
 
-labels = [4.0, 43.0]
-axis = 2
-dataset_dir = 'z_validation_maskonly'
+def create_dataset(input_scan, niftii_mask_filename, niftii_img_filename, labels, axis, output_dir):
+  print('Processing {}...'.format(input_scan))
+  output_filename = input_scan
 
+  mask_data = load_image_data(filename=niftii_mask_filename, dirname=input_scan)
+  image_data = load_image_data(filename=niftii_img_filename, dirname=input_scan)
+  labels_count(mask_data, labels)
+  save_dataset(image_data, mask_data, labels, output_filename, axis=axis, out_dir=output_dir)
+
+labels = [4.0, 43.0]
 input_mask_niftii = 'aseg-in-t1weighted_2std.nii.gz'
 input_img_niftii = 't1weighted_2std.nii.gz'
-output_dir = '{}/{}_axis{}'.format('datasets', dataset_dir, axis)
+train_valid_ratio = 0.75
 
-if os.path.exists(output_dir):
-  shutil.rmtree(output_dir)
+input_scans = [
+  'NKI-RS-22-1',
+  'NKI-RS-22-2',
+  'NKI-RS-22-3',
+  'NKI-RS-22-4',
+  'NKI-RS-22-5',
+  'NKI-RS-22-6',
+  'NKI-RS-22-7',
+  'NKI-RS-22-8',
+  'NKI-RS-22-9',
+  'NKI-RS-22-10',
+  'NKI-RS-22-11',
+  'NKI-RS-22-12',
+  'NKI-RS-22-13',
+  'NKI-RS-22-14',
+  'NKI-RS-22-15',
+  'NKI-RS-22-16',
+  'NKI-RS-22-17',
+  'NKI-RS-22-18',
+  'NKI-RS-22-19',
+  'NKI-RS-22-20'
+]
 
-# Set 1
-input_dir = 'NKI-RS-22-7'
-output_filename = input_dir
+train_valid_split = int(len(input_scans) * 0.85)
 
-mask_data = load_image_data(filename=input_mask_niftii, dirname=input_dir)
-image_data = load_image_data(filename=input_img_niftii, dirname=input_dir)
-labels_count(mask_data, labels)
-create_training_dataset(image_data, mask_data, labels, output_filename, axis=axis, out_dir=output_dir)
+axis = 1
+train_dir = 'z_train'
+validation_dir = 'z_validation'
+output_train = os.path.join('datasets', '{}_axis{}'.format(train_dir, axis))
+output_validation = os.path.join('datasets', '{}_axis{}'.format(validation_dir, axis))
 
-# Set 2
-input_dir = 'NKI-RS-22-20'
-output_filename = input_dir
+if os.path.exists(train_dir):
+  shutil.rmtree(train_dir)
+if os.path.exists(validation_dir):
+  shutil.rmtree(validation_dir)
 
-mask_data = load_image_data(filename=input_mask_niftii, dirname=input_dir)
-image_data = load_image_data(filename=input_img_niftii, dirname=input_dir)
-labels_count(mask_data, labels)
-create_training_dataset(image_data, mask_data, labels, output_filename, axis=axis, out_dir=output_dir)
+print('Creating training set...')
+for input_scan in input_scans[:train_valid_split]:
+  create_dataset(input_scan, input_mask_niftii, input_img_niftii, labels, axis, output_train)
 
-# Set 3
-input_dir = 'NKI-TRT-20-1'
-output_filename = input_dir
-
-mask_data = load_image_data(filename=input_mask_niftii, dirname=input_dir)
-image_data = load_image_data(filename=input_img_niftii, dirname=input_dir)
-labels_count(mask_data, labels)
-create_training_dataset(image_data, mask_data, labels, output_filename, axis=axis, out_dir=output_dir)
-
-# Validation Set 1
-# input_dir = 'Afterthought-1'
-# output_filename = input_dir
-
-# mask_data = load_image_data(filename=input_mask_niftii, dirname=input_dir)
-# image_data = load_image_data(filename=input_img_niftii, dirname=input_dir)
-# labels_count(mask_data, labels)
-# create_training_dataset(image_data, mask_data, labels, output_filename, axis=axis, out_dir=output_dir)
+print('Creating validation set...')
+for input_scan in input_scans[train_valid_split:]:
+  create_dataset(input_scan, input_mask_niftii, input_img_niftii, labels, axis, output_validation)
